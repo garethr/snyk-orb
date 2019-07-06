@@ -2,7 +2,7 @@ version: 2.1
 description: Commands for integrating Snyk into your CircleCI builds
 commands:
   install_snyk:
-    description: "Install Snyk"
+    description: "Install the latest version of the Snyk CLI"
     steps:
       - run:
           name: Install Snyk
@@ -14,41 +14,50 @@ commands:
               sudo chmod +x /usr/local/bin/snyk
             fi
   check_code_with_snyk:
-    description: "Monitor dependencies with Snyk"
+    description: "Check your application dependencies for known vulnerabilities with Snyk"
     parameters:
       project:
         type: string
+        description: Override the default project name
         default: ""
       args:
         type: string
+        description: Pass arbitrary arguments to the Snyk CLI
         default: ""
       type:
         type: enum
+        description: Whether to run track results on Snyk and recieve alerts for new vulnerabilities
         default: "monitor"
         enum: ["monitor", "test"]
     steps:
       - run:
           name: Run Snyk to check dependencies
-          command: snyk << parameters.type >> --file=<< parameters.project >> << parameters.args >>
+          command: snyk << parameters.type >> --project-name=<< parameters.project >> << parameters.args >>
   check_docker_with_snyk:
-    description: "Monitor Docker images with Snyk"
+    description: "Check your Docker images for known vulnerabilities with Snyk"
     parameters:
       image:
         type: string
+        description: The image repository to check
       dockerfile:
         type: string
+        description: The path to the local Dockerfile
         default: Dockerfile
       tag:
         type: string
+        description: The image tag to check
         default: latest
       project:
         type: string
+        description: Override the default project name
         default: ""
       args:
         type: string
+        description: Pass arbitrary arguments to the Snyk CLI
         default: ""
       type:
         type: enum
+        description: Whether to run track results on Snyk and recieve alerts for new vulnerabilities
         default: "monitor"
         enum: ["monitor", "test"]
     steps:
