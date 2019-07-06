@@ -1,0 +1,18 @@
+version: 2.1
+
+orbs:
+  orb-tools: circleci/orb-tools@8.27.2
+
+jobs:
+  validate:
+    docker:
+      - image: circleci/circleci-cli:latest
+    steps:
+      - checkout
+      - orb-tools/validate
+
+workflows:
+  test:
+    jobs:
+      - validate
+      - orb-tools/lint
