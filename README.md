@@ -2,10 +2,12 @@
 
 [![CircleCI](https://circleci.com/gh/garethr/snyk-orb.svg?style=svg)](https://circleci.com/gh/garethr/snyk-orb)
 
+Using this Orb requires a [Snyk account](https://snyk.io/signup) and setting the `SNYK_TOKEN` environment variable in the relevant build.
+
 ```yaml
 version: 2.1
 orbs:
-  snyk: garethr/snyk@0.1.0
+  snyk: garethr/snyk@0.3.0
 jobs:
   build:
     docker:

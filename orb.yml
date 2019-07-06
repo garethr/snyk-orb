@@ -3,6 +3,11 @@ description: Commands for integrating Snyk into your CircleCI builds
 commands:
   install_snyk:
     description: "Install the latest version of the Snyk CLI"
+    parameters:
+      suggestions:
+        type: boolean
+        description: Whether or not to show suggestions
+        default: false
     steps:
       - run:
           name: Install Snyk
@@ -13,6 +18,12 @@ commands:
               sudo mv snyk-linux /usr/local/bin/snyk
               sudo chmod +x /usr/local/bin/snyk
             fi
+      - when:
+          condition: << parameters.suggestions >>
+          steps:
+            - run:
+                name: Disable Snyk suggestions
+                command: snyk config set disableSuggestions=true
   check_code_with_snyk:
     description: "Check your application dependencies for known vulnerabilities with Snyk"
     parameters:
@@ -131,14 +142,14 @@ jobs:
         type: string
         description: The image tag to check
         default: latest
-      project:
-        type: string
-        description: Override the default project name
-        default: ""
       args:
         type: string
         description: Pass arbitrary arguments to the Snyk CLI
         default: ""
+      save:
+        type: boolean
+        description: Whether or not to save the results to Snyk for monitoring
+        default: true
     docker:
       - image: circleci/buildpack-deps:stretch
     steps:
@@ -152,3 +163,13 @@ jobs:
           tag: << parameters.tag >>
           args: << parameters.args >>
           dockerfile: ""
+          type: test
+      - when:
+          condition: << parameters.save >>
+          steps:
+            - check_docker_with_snyk:
+                image: << parameters.image >>
+                tag: << parameters.tag >>
+                args: << parameters.args >>
+                project: << parameters.image >>:<< parameters.tag >>
+                dockerfile: ""
