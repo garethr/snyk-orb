@@ -143,6 +143,9 @@ jobs:
       - image: circleci/buildpack-deps:stretch
     steps:
       - setup_remote_docker
+      - run:
+          name: Pull image
+          command: docker pull << parameters.image >>:<< parameters.tag >>
       - install_snyk
       - check_docker_with_snyk:
           image: << parameters.image >>
