@@ -75,7 +75,7 @@ examples:
       jobs:
         build:
           docker:
-            - image: buildpack-deps:stretch
+            - image: circleci/buildpack-deps:stretch
           steps:
             - snyk/install_snyk
   check_code_with_snyk:
@@ -87,7 +87,7 @@ examples:
       jobs:
         build:
           docker:
-            - image: buildpack-deps:stretch
+            - image: circleci/buildpack-deps:stretch
           steps:
             - checkout
             - snyk/install_snyk
@@ -101,8 +101,9 @@ examples:
       jobs:
         build:
           docker:
-            - image: buildpack-deps:stretch
+            - image: circleci/buildpack-deps:stretch
           steps:
+            - setup_remote_docker
             - snyk/install_snyk
             - snyk/check_docker_with_snyk:
                 image: nginx
