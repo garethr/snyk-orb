@@ -71,7 +71,7 @@ examples:
     usage:
       version: 2.1
       orbs:
-        snyk: garethr/snyk@0.1.0
+        snyk: garethr/snyk@x.y.z
       jobs:
         build:
           docker:
@@ -83,7 +83,7 @@ examples:
     usage:
       version: 2.1
       orbs:
-        snyk: garethr/snyk@0.1.0
+        snyk: garethr/snyk@x.y.z
       jobs:
         build:
           docker:
@@ -93,11 +93,11 @@ examples:
             - snyk/install_snyk
             - snyk/check_code_with_snyk
   check_docker_with_snyk:
-    description: Run snyk monitor for the nginx Docker image
+    description: Run snyk monitor for a specific Docker image, useful when building the image at the same time
     usage:
       version: 2.1
       orbs:
-        snyk: garethr/snyk@0.1.0
+        snyk: garethr/snyk@x.y.z
       jobs:
         build:
           docker:
@@ -107,3 +107,45 @@ examples:
             - snyk/install_snyk
             - snyk/check_docker_with_snyk:
                 image: nginx
+  check_docker_image_vulnerabilities:
+    description: Run snyk monitor for a Docker image
+    usage:
+      version: 2.1
+      orbs:
+        snyk: garethr/snyk@x.y.z
+      workflow:
+        image_validation:
+          jobs:
+            - check_docker_image_vulnerabilities:
+                image: nginx
+
+
+jobs:
+  check_docker_image_vulnerabilities:
+    description: Check a Docker image for vulnerabilities as part of a workflow
+    parameters:
+      image:
+        type: string
+        description: The image repository to check
+      tag:
+        type: string
+        description: The image tag to check
+        default: latest
+      project:
+        type: string
+        description: Override the default project name
+        default: ""
+      args:
+        type: string
+        description: Pass arbitrary arguments to the Snyk CLI
+        default: ""
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps:
+      - setup_remote_docker
+      - install_snyk
+      - check_docker_with_snyk:
+          image: << parameters.image >>
+          tag: << parameters.tag >>
+          args: << parameters.args >>
+          dockerfile: ""
